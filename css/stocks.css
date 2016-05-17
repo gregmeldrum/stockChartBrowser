@@ -10,6 +10,10 @@ body {
     background-color: #1B1B1E;
 }
 
+#sectors {
+   margin: 20px 50px 20px 50px;
+}
+
 /* The large divs */
 .outer {
   height: 250px;
@@ -74,7 +78,7 @@ body {
     margin-right: 1px;
     margin-top: 1px;
     line-height: 1.3em;
-    height: 2.6em;
+    height: 2.49em;
     overflow: hidden;
     color: #FFFFFF;
 }
