@@ -120,16 +120,19 @@ function stockApi(stockListRaw) {
 
       // create sector divs and then delegate for inner objects (industries)
       for (var i = 0; i < numRow; i++) {
+        var sectorRow = $('<div></div>').addClass('grid-row');
+
         var numCols = guiObjModel[i].length;
         for (var j = 0; j < numCols; j++) {
           var sectorId = "sector" + "-" + i + "-" + j;
-          $("#sectors").append("<div id=\"" + sectorId + "\" class=\"outer center-align " +
-            getTransitionOrigin(i, j, numRow, maxCol) +
-            "\"></div>");
-          $("#" + sectorId).append("<div class=\"outer-title valign\">" + guiObjModel[i][j].sector + "</div>")
-          renderIndustries(sectorId, guiObjModel[i][j].industries);
+          var sectorPill = $('<div></div>').attr('id', sectorId).addClass('outer center-align ' 
+          + getTransitionOrigin(i, j, numRow, maxCol));
+          var sectorTitle = $('<div></div>').text(guiObjModel[i][j].sector).addClass('outer-title valign');
+          sectorPill.append(sectorTitle);
+          renderIndustries(sectorPill, guiObjModel[i][j].industries);
+          sectorRow.append(sectorPill);
         }
-        $("#sectors").append("<div style=\"clear: left;\"></div>");
+        $("#sectors").append(sectorRow);
       }
       $(".outer").css("width", widthPerc + "%");
     }
@@ -138,7 +141,8 @@ function stockApi(stockListRaw) {
     initializeChartPopover();
   }
   
-  function renderIndustries(sectorId, guiDom) {
+  function renderIndustries(sectorPill, guiDom) {
+    var sectorId = sectorPill.attr('id');
     if ((guiDom !== undefined) && (guiDom.length > 0)) {
       var numRow = guiDom.length;
       var maxCol = guiDom[0].length;
@@ -153,20 +157,27 @@ function stockApi(stockListRaw) {
         heightPx = 50;
       }
 
+      // Loop over each Industry row
       for (var i = 0; i < numRow; i++) {
         var numCols = guiDom[i].length;
+        var industryRow = $('<div></div>').addClass('grid-row');
+        
+        // Loop over each Industry column in this row
         for (var j = 0; j < numCols; j++) {
           var industryId = sectorId + "industry" + "-" + i + "-" + j;
-          $("#" + sectorId).append("<div id=\"" + industryId + "\" class=\"inner " +
-            getTransitionOrigin(i, j, numRow, maxCol) +
-            "\"></div>");
-
-          var industry = guiDom[i][j].industry;
-          $("#" + industryId).append("<div class=\"inner-title valign\">" + industry + "</div>");
-          var stockListLength = renderStocks(industryId, guiDom[i][j].stocks);
+          var industryPill = $('<div></div>').attr('id', industryId).addClass('inner ' + getTransitionOrigin(i, j, numRow, maxCol));
+          var industryName = guiDom[i][j].industry;
+          var industryTitle = $('<div></div>').addClass('inner-title valign').text(industryName);
+          industryPill.append(industryTitle);
           
+          var stockListLength = renderStocks(industryPill, guiDom[i][j].stocks);
+          
+          // If we hover over the Industry Pill and the height
+          // isn't big enough to display all of the stocks,
+          // make the height bigger
           var innerDivHeight = Math.floor(innerDivTitleHeight +
                (stockListLength * innerDivListItemHeight));
+               
           if (innerDivHeight > heightPx) {
             
             // Create a closure to handle dynamic height
@@ -175,43 +186,53 @@ function stockApi(stockListRaw) {
                 $(this).css("height", divHeight + "px");
               }
             })(innerDivHeight);
-            //console.log("Number of stocks " + stockListLength + " " + industryId)
-            $("#" + industryId).hover(newHeightFunction,
+            
+            // Bind the functions to make the height bigger on
+            // hover and back to normal on non-hover to the
+            // DOM element (industryPill)
+            industryPill.hover(newHeightFunction,
             function () {
               $(this).css('height', heightPx + "px");
             });
           }
+          industryRow.append(industryPill);
         }
-        $("#" + industryId).append("<div style=\"clear: left;\"></div>");
+        sectorPill.append(industryRow);
       }
 
       // Set the width for the outer divs
-      $("#" + sectorId + " > .inner").css("width", widthPerc + "%");
-      $("#" + sectorId + " > .inner").css("height", heightPx + "px");
+      sectorPill.find('.inner').css('width', widthPerc + "%").css("height", heightPx + "px");
     }
   }
 
-  function renderStocks(industryId, stocks) {
+  // Render the list of stocks in this industry
+  function renderStocks(industryPill, stocks) {
+    industryId = industryPill.attr('id');
     //console.log(stocks);
     var stockListLength = 0;
     if (stocks !== undefined) {
       stockList = Object.getOwnPropertyNames(stocks);
       stockListLength = stockList.length;
-      $("#" + industryId).append("<div class=\"stock-list left-align\">");
-      $("#" + industryId + " div.stock-list").append("<ul class=\"list-unstyled\">");
+      var htmlStockListDiv = $('<div></div').addClass('stock-list left-align');
+      var htmlStockList = $('<ul></ul>').addClass('list-unstyled');
+ 
       for (var i = 0; i < stockListLength; i++) {
         var stockTicker = stocks[stockList[i]].stockTicker;
         var stockId = industryId + "-" + stockTicker;
-        $("#" + industryId + " div.stock-list ul").append("<li class=\"no-wrap chart-popover\"" +
-          " data-popover=\"" + stockTicker + "\"" +
-          " id=\"" + stockId + "\">" +
-          stockList[i]);
-
+        var htmlStock = $('<li>').addClass("no-wrap chart-popover")
+                                 .attr('data-popover', stockTicker)
+                                 .attr('id', stockId)
+                                 .text(stockList[i]);
+        htmlStockList.append(htmlStock);
       }
+      
+      htmlStockListDiv.append(htmlStockList);
+      industryPill.append(htmlStockListDiv);
     }
     return stockListLength;
   }
 
+  // Create the popover with the chart
   function initializeChartPopover() {
     hiConfig = {
       sensitivity: 9,
@@ -237,21 +258,38 @@ function stockApi(stockListRaw) {
         } else {
           xOffset += 20;
         }
-        var smallChart = $('<img />',
+
+        var smallChartDiv = $('<div/>',
           {
-            'style': "top:" + yOffset + "px; left: " + xOffset + "px;" + "height:" + popUpHeight + "px; width:" + popUpWidth + "px;",
+            'style': "top:" + yOffset + "px; left: " + xOffset + "px;" + "height:" + (popUpHeight + 20) + "px; width:" + popUpWidth + "px;",
             'class': 'small-chart',
+            'id' : 'popup-chart-div'
+          });
+
+        var smallChart = $('<img/>',
+          {
+            'style': "height:" + popUpHeight + "px; width:" + popUpWidth + "px;",
+            //'class': 'small-chart',
             src: "http://www.barchart.com/imagechart.php?sym=" + stockTicker + "&notitle=false&width=" + popUpWidth
             + "&height=" + popUpHeight + "&type=basic&plot=CANDLE"
           });
-        $("body").after(smallChart);
+          
+        var smallChartContainer = $('<span/>')
+                                    .addClass("footer")
+                                    .text("Charts provided by ")
+                                    .append($('<a\>')
+                                    .attr('href', "http://bigcharts.com").text('BigCharts.com'));
+                                    
+        // Add the chart to the DOM
+        smallChartContainer.prepend(smallChart);
+        smallChartDiv.append(smallChartContainer);
+        $(".outer-container").after(smallChartDiv);
       },
       out: function () {
         $('.small-chart').remove();
       }
     }
     $(".chart-popover").hoverIntent(hiConfig)
-
   }
   
   function getTransitionOrigin(row, col, maxRow, maxCol) {
@@ -303,4 +341,3 @@ function stockApi(stockListRaw) {
   // Render the GUI object model into the DOM
   sAndPStocks.render(guiObjModel);
 }());
-

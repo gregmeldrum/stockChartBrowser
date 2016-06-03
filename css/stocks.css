@@ -10,7 +10,11 @@ body {
     background-color: #1B1B1E;
 }
 
-#sectors {
+.grid-row {
+  line-height: 0px;
+}
+
+.sector-container {
    margin: 20px 50px 20px 50px;
 }
 
@@ -19,13 +23,12 @@ body {
   height: 250px;
   margin: 7px 1% 7px 1%;
   float: left;
+  /*display: inline-block;*/
   position: relative;
-
   transition: all .17s ease-in-out;
   -webkit-transition: all .17s ease-in-out;
   -webkit-transition-delay: .1s; /* Safari */
   transition-delay: .1s;
-  opacity: .99;
   background-color: #B8DBD9;
   color: #4A4A4A;
   box-shadow: 5px 5px 5px #202020;
@@ -34,7 +37,7 @@ body {
 .outer:hover {
   -webkit-transform: scale(2.2);
   transform: scale(2);
-  z-index: 2;
+  z-index: 4;
   background-color: #CFEFF3;
   color: #3A3A3A;
 }
@@ -49,7 +52,7 @@ body {
 .inner {
   height: 25px;
   margin: 5px 1% 5px 1%;
-  float: left;
+  display: inline-block;
   position: relative;
   transition: all .17s ease-in-out;
   -webkit-transition: all .17s ease-in-out;
@@ -60,7 +63,6 @@ body {
   color: #DADADA;
   overflow: hidden;
   box-shadow: 2px 2px 5px #303030;
-
 }
 
 .inner:hover {
@@ -103,6 +105,12 @@ div.stock-list ul {
     position: absolute;
     z-index: 10;
     /*box-shadow: 4px 4px 5px #303030;*/ /*Performance problem*/
+}
+
+#popup-chart-div {
+    background-color: #E8E8C9;
+    display: inline;
+    line-height: 1;
 }
 
 .no-wrap {
