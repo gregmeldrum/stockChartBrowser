@@ -23,7 +23,7 @@ body {
   height: 250px;
   margin: 7px 1% 7px 1%;
   float: left;
-  /*display: inline-block;*/
+  opacity: .99; /* For sibling z-index */
   position: relative;
   transition: all .17s ease-in-out;
   -webkit-transition: all .17s ease-in-out;
