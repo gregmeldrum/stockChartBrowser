@@ -270,8 +270,9 @@ function stockApi(stockListRaw) {
           {
             'style': "height:" + popUpHeight + "px; width:" + popUpWidth + "px;",
             //'class': 'small-chart',
-            src: "http://www.barchart.com/imagechart.php?sym=" + stockTicker + "&notitle=false&width=" + popUpWidth
-            + "&height=" + popUpHeight + "&type=basic&plot=CANDLE"
+            //src: "http://bigcharts.marketwatch.com/kaavio.Webhost/charts/big.chart?nosettings=1&symb=" + stockTicker + "&notitle=false&width=" + popUpWidth
+            //+ "&height=" + popUpHeight + "&type=basic&plot=CANDLE"
+            src: "http://bigcharts.marketwatch.com/kaavio.Webhost/charts/big.chart?nosettings=1&symb=" + stockTicker
           });
           
         var smallChartContainer = $('<span/>')
