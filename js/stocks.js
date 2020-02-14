@@ -241,8 +241,7 @@ function stockApi(stockListRaw) {
           {
             'style': "top:" + yOffset + "px; left: " + xOffset + "px;" + "height:" + popUpHeight + "px; width:" + popUpWidth + "px;",
             'class': 'small-chart',
-            src: "http://www.barchart.com/imagechart.php?sym=" + stockTicker + "&notitle=false&width=" + popUpWidth
-            + "&height=" + popUpHeight + "&type=basic&plot=CANDLE"
+            src: "https://api.wsj.net/api/kaavio/charts/big.chart?nosettings=1&symb=" + stockTicker +"&uf=0&type=2&size=1"
           });
         $("body").after(smallChart);
       },
