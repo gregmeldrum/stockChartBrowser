@@ -269,10 +269,7 @@ function stockApi(stockListRaw) {
         var smallChart = $('<img/>',
           {
             'style': "height:" + popUpHeight + "px; width:" + popUpWidth + "px;",
-            //'class': 'small-chart',
-            //src: "http://bigcharts.marketwatch.com/kaavio.Webhost/charts/big.chart?nosettings=1&symb=" + stockTicker + "&notitle=false&width=" + popUpWidth
-            //+ "&height=" + popUpHeight + "&type=basic&plot=CANDLE"
-            src: "http://bigcharts.marketwatch.com/kaavio.Webhost/charts/big.chart?nosettings=1&symb=" + stockTicker
+            src: "https://api.wsj.net/api/kaavio/charts/big.chart?nosettings=1&symb=" + stockTicker +"&uf=0&type=2&size=1"  
           });
           
         var smallChartContainer = $('<span/>')
